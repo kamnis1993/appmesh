@@ -32,13 +32,13 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Login to AWS ECR
-      run: aws ecr get-login-password --region <AWS_REGION> | docker login --username AWS --password-stdin <AWS_ACCOUNT_ID>.dkr.ecr.<AWS_REGION>.amazonaws.com
+      run: aws ecr get-login-password --region ap-northeast-1 | docker login --username AWS --password-stdin 643575754776.dkr.ecr.ap-northeast-1.amazonaws.com
 
     - name: Build and Push Docker Image
       run: |
-        docker build -t <IMAGE_NAME>:<COMMIT_HASH> .
-        docker tag <IMAGE_NAME>:<COMMIT_HASH> <AWS_ACCOUNT_ID>.dkr.ecr.<AWS_REGION>.amazonaws.com/<IMAGE_NAME>:<COMMIT_HASH>
-        docker push <AWS_ACCOUNT_ID>.dkr.ecr.<AWS_REGION>.amazonaws.com/<IMAGE_NAME>:<COMMIT_HASH>
+        docker build -t testing .
+        docker tag teting:1 643575754776.dkr.ecr.ap-northeast-1.amazonaws.com/testing:1
+        docker push teting:1 643575754776.dkr.ecr.ap-northeast-1.amazonaws.com/testing:1
 
   deploy_to_ecs:
     runs-on: ubuntu-latest
@@ -48,10 +48,10 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Login to AWS ECR
-      run: aws ecr get-login-password --region <AWS_REGION> | docker login --username AWS --password-stdin <AWS_ACCOUNT_ID>.dkr.ecr.<AWS_REGION>.amazonaws.com
+      run: aws ecr get-login-password --region ap-northeast-1 | docker login --username AWS --password-stdin 643575754776.dkr.ecr.ap-northeast-1.amazonaws.com
 
     - name: Deploy to ECS
-      run: ecs-cli compose --file docker-compose.yml up --cluster <ECS_CLUSTER_NAME>
+      run: ecs-cli compose --file docker-compose.yml up --cluster example
 
   appmesh_canary_deployment:
     runs-on: ubuntu-latest

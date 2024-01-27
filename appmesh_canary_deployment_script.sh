@@ -1,11 +1,11 @@
 #!/bin/bash
 
 # Set your AWS region
-AWS_REGION="your-aws-region"
+AWS_REGION="ap-northeast-1"
 
 # Set your AppMesh parameters
-APPMESH_NAME="your-appmesh-name"
-VIRTUAL_SERVICE_NAME="your-virtual-service-name"
+APPMESH_NAME="example"
+VIRTUAL_SERVICE_NAME="example"
 CANARY_TARGET_VERSION="v2"  # Version to gradually roll out
 
 # Set thresholds for canary deployment
@@ -70,6 +70,6 @@ else
     --spec '{"httpRoute": {"action": {"weightedTargets": [{"virtualNode": "canary", "weight": 100}]}}}'
 
   # Notify on successful canary deployment (add your notification logic)
-  echo "Canary deployment completed successfully" | mail -s "Canary Deployment Success" your-email@example.com
+  echo "Canary deployment completed successfully" | mail -s "Canary Deployment Success" kamran.stg@gmail.com
 fi
 
