@@ -52,7 +52,12 @@ jobs:
 
 
     - name: Login to AWS ECR
-      run: aws ecr get-login-password --region ap-northeast-1 | docker login --username AWS --password-stdin 643575754776.dkr.ecr.ap-northeast-1.amazonaws.com
+      run: |
+        echo "${AWS_ACCESS_KEY_ID}" | aws configure set aws_access_key_id 
+        echo "${AWS_SECRET_ACCESS_KEY}" | aws configure set aws_secret_access_key 
+        aws configure set region ap-northeast-1
+        aws ecr get-login-password --region ap-northeast-1 --profile ecr-user | docker login --username AWS --password-stdin 643575754776.dkr.ecr.ap-northeast-1.amazonaws.com
+
 
     - name: Build and Push Docker Image
       run: |
