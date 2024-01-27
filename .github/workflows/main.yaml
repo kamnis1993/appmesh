@@ -18,14 +18,6 @@ jobs:
       with:
         terraform_version: 1.0.0
 
-
-     steps:
-      - name: Install AWS CLI and ECS CLI
-        run: |
-          sudo curl -Lo /usr/local/bin/ecs-cli https://amazon-ecs-cli.s3.amazonaws.com/ecs-cli-linux-amd64-latest
-          sudo chmod +x /usr/local/bin/ecs-cli
-
-
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
