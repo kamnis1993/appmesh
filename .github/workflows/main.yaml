@@ -56,9 +56,10 @@ jobs:
 
     - name: Build and Push Docker Image
       run: |
-        docker build -t testing .
-        docker tag teting:1 643575754776.dkr.ecr.ap-northeast-1.amazonaws.com/testing:1
-        docker push teting:1 643575754776.dkr.ecr.ap-northeast-1.amazonaws.com/testing:1
+        
+       docker build -t testing .
+       docker tag testing:1 643575754776.dkr.ecr.ap-northeast-1.amazonaws.com/testing:1
+       docker push 643575754776.dkr.ecr.ap-northeast-1.amazonaws.com/testing:1
 
   deploy_to_ecs:
     runs-on: ubuntu-latest
