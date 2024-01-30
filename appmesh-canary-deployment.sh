@@ -8,7 +8,7 @@ AWS_REGION="ap-northeast-1"
 APPMESH_NAME="example"
 VIRTUAL_SERVICE_NAME="example"
 CANARY_TARGET_VERSION="v2"  # Version to gradually roll out
-VIRTUAL_ROUTER_NAME="example-router"  # Set the virtual router name
+VIRTUAL_ROUTER_NAME="example"  # Set the virtual router name
 
 # Set thresholds for canary deployment
 ERROR_THRESHOLD=10  # Set a threshold for an acceptable error rate in percentage
@@ -23,7 +23,7 @@ log "Deploying initial traffic to the canary version with 0% weight"
 aws appmesh update-route --region $AWS_REGION \
   --mesh-name $APPMESH_NAME \
   --route-name $VIRTUAL_SERVICE_NAME-route \
-  --virtual-name $VIRTUAL_SERVICE_NAME \
+  --virtual-service-name $VIRTUAL_SERVICE_NAME \
   --virtual-router-name $VIRTUAL_ROUTER_NAME \
   --spec '{"httpRoute": {"action": {"weightedTargets": [{"virtualNode": "canary", "weight": 0}]}, "match": { "prefix": "/" }}}'
 
@@ -49,7 +49,7 @@ if (( $(echo "$error_rate > $ERROR_THRESHOLD" | bc -l) )); then
   aws appmesh update-route --region $AWS_REGION \
     --mesh-name $APPMESH_NAME \
     --route-name $VIRTUAL_SERVICE_NAME-route \
-    --virtual-name $VIRTUAL_SERVICE_NAME \
+    --virtual-service-name $VIRTUAL_SERVICE_NAME \
     --virtual-router-name $VIRTUAL_ROUTER_NAME \
     --spec '{"httpRoute": {"action": {"weightedTargets": [{"virtualNode": "canary", "weight": 0}]}, "match": { "prefix": "/" }}}'
 
@@ -63,7 +63,7 @@ else
     aws appmesh update-route --region $AWS_REGION \
       --mesh-name $APPMESH_NAME \
       --route-name $VIRTUAL_SERVICE_NAME-route \
-      --virtual-name $VIRTUAL_SERVICE_NAME \
+      --virtual-service-name $VIRTUAL_SERVICE_NAME \
       --virtual-router-name $VIRTUAL_ROUTER_NAME \
       --spec '{"httpRoute": {"action": {"weightedTargets": [{"virtualNode": "canary", "weight": '$weight'}]}, "match": { "prefix": "/" }}}'
 
