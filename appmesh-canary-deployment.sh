@@ -6,6 +6,7 @@ AWS_REGION="ap-northeast-1"
 
 # Set your AppMesh parameters
 APPMESH_NAME="example"
+ROUTE_NAME= "example"
 #VIRTUAL_SERVICE_NAME="example"
 CANARY_TARGET_VERSION="v2"  # Version to gradually roll out
 VIRTUAL_ROUTER_NAME="example"  # Set the virtual router name
@@ -22,7 +23,7 @@ log() {
 log "Deploying initial traffic to the canary version with 0% weight"
 aws appmesh update-route --region $AWS_REGION \
   --mesh-name $APPMESH_NAME \
-  --route-name $VIRTUAL_SERVICE_NAME \
+  --route-name $ROUTE_NAME \
 #  --virtual-service-name $VIRTUAL_SERVICE_NAME \
   --virtual-router-name $VIRTUAL_ROUTER_NAME \
   --spec '{"httpRoute": {"action": {"weightedTargets": [{"virtualNode": "canary", "weight": 0}]}, "match": { "prefix": "/" }}}'
@@ -48,7 +49,7 @@ if (( $(echo "$error_rate > $ERROR_THRESHOLD" | bc -l) )); then
   log "Rolling back the canary deployment due to a high error rate"
   aws appmesh update-route --region $AWS_REGION \
     --mesh-name $APPMESH_NAME \
-    --route-name $VIRTUAL_SERVICE_NAME \
+    --route-name $ROUTE_NAME \
  #   --virtual-service-name $VIRTUAL_SERVICE_NAME \
     --virtual-router-name $VIRTUAL_ROUTER_NAME \
     --spec '{"httpRoute": {"action": {"weightedTargets": [{"virtualNode": "canary", "weight": 0}]}, "match": { "prefix": "/" }}}'
@@ -62,7 +63,7 @@ else
     log "Updating canary traffic weight to $weight%"
     aws appmesh update-route --region $AWS_REGION \
       --mesh-name $APPMESH_NAME \
-      --route-name $VIRTUAL_SERVICE_NAME \
+      --route-name $ROUTE_NAME \
 #      --virtual-service-name $VIRTUAL_SERVICE_NAME \
       --virtual-router-name $VIRTUAL_ROUTER_NAME \
       --spec '{"httpRoute": {"action": {"weightedTargets": [{"virtualNode": "canary", "weight": '$weight'}]}, "match": { "prefix": "/" }}}'
@@ -76,7 +77,7 @@ else
   log "Setting canary traffic to 100%"
   aws appmesh update-route --region $AWS_REGION \
     --mesh-name $APPMESH_NAME \
-    --route-name $VIRTUAL_SERVICE_NAME \
+    --route-name $ROUTE_NAME \
 #    --virtual-service-name $VIRTUAL_SERVICE_NAME \
     --virtual-router-name $VIRTUAL_ROUTER_NAME \
     --spec '{"httpRoute": {"action": {"weightedTargets": [{"virtualNode": "canary", "weight": 100}]}, "match": { "prefix": "/" }}}'
