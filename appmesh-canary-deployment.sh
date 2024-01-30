@@ -45,8 +45,12 @@ cat <<EOF >$METRIC_DATA_QUERIES_FILE
         ],
         "MetricName": "4xxError"
       },
-      "ReturnData": true
+
+      "Period": 300,  # Set the period in seconds (adjust as needed)
+      "Stat": "Sum",  # Choose an appropriate statistic (Sum, Average, etc.)
+      "Unit": "Count"
     }
+      "ReturnData": true
   }
 ]
 EOF
