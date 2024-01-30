@@ -38,7 +38,7 @@ error_rate=$(aws cloudwatch get-metric-data --region $AWS_REGION \
   --end-time $(date -u +%Y-%m-%dT%H:%M:%SZ) \
   --metric-data-queries '[{"id":"m1","metricStat":{"metric":{"dimensions":[{"name":"Route","value": "'$ROUTE_NAME'"},{"name":"Mesh","value":"'$(echo $APPMESH_NAME)'"},{"name":"VirtualRouter","value":"'$(echo $VIRTUAL_ROUTER_NAME)'"}],"metricName":"4xxError"}},"returnData":true}]' \
   --scan-by "TimestampDescending" \
-  --limit 1 \
+  --max-datapoints 1 \
   --output json \
   --query 'MetricDataResults[0].Values[0]')
 
