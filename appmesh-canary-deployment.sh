@@ -41,11 +41,12 @@ cat <<EOF >$METRIC_DATA_QUERIES_FILE
     "MetricStat": {
       "Metric": {
         "Dimensions": [
-          {"Name": "VirtualService", "Value": "'$VIRTUAL_SERVICE_NAME'"},
-          {"Name": "Mesh", "Value": "'$APPMESH_NAME'"},
-          {"Name": "VirtualRouter", "Value": "'$VIRTUAL_ROUTER_NAME'"}
+          {"Name": "VirtualService", "Value": "$VIRTUAL_SERVICE_NAME"},
+          {"Name": "Mesh", "Value": "$APPMESH_NAME"},
+          {"Name": "VirtualRouter", "Value": "$VIRTUAL_ROUTER_NAME"}
         ],
-        "MetricName": "4xxError"
+        "MetricName": "4xxError",
+        "Namespace": "AWS/AppMesh"
       },
       "Period": 300,
       "Stat": "Sum",
@@ -68,6 +69,9 @@ error_rate=$(aws cloudwatch get-metric-data --region $AWS_REGION \
 
 # Remove the temporary file
 rm -f $METRIC_DATA_QUERIES_FILE
+
+
+
 
 
 
