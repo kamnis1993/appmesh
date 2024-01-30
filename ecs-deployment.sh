@@ -17,7 +17,7 @@ aws ecs update-service \
   --task-definition your-task-definition:latest
 
 # Tag ECS tasks with the commit hash
-aws ecs tag-resource \
-  --region $REGION \
-  --resource-arn $ECS_SERVICE_ARN \
-  --tags Key=Name,Value=$COMMIT_HASH
+#aws ecs tag-resource \
+#  --region $REGION \
+#  --resource-arn $ECS_SERVICE_ARN \
+#  --tags Key=Name,Value=$COMMIT_HASH
