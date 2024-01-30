@@ -29,7 +29,7 @@ aws appmesh update-route --region $AWS_REGION \
 
 # Sleep for a duration to observe metrics (adjust as needed)
 log "Sleeping for 5 minutes to observe metrics"
-sleep 300  # Sleep for 5 minutes
+sleep 60  # Sleep for 5 minutes
 
 # Check metrics (example: error rate)
 log "Checking metrics (error rate)"
@@ -37,7 +37,27 @@ error_rate=$(aws cloudwatch get-metric-data --region $AWS_REGION \
   --start-time $(date -u +%Y-%m-%dT%H:%M:%SZ --date '-5 minutes') \
   --end-time $(date -u +%Y-%m-%dT%H:%M:%SZ) \
  # --metric-data-queries '[{"id":"m1","metricStat":{"metric":{"dimensions":[{"name":"Route","value": "'$ROUTE_NAME'"},{"name":"Mesh","value":"'$(echo $APPMESH_NAME)'"},{"name":"VirtualRouter","value":"'$(echo $VIRTUAL_ROUTER_NAME)'"}],"metricName":"4xxError"}},"returnData":true}]' \
-  --metric-data-queries '[{"Id":"m1","MetricStat":{"Metric":{"Dimensions":[{"Name":"VirtualService","Value":"'$VIRTUAL_SERVICE_NAME'"},{"Name":"Mesh","Value":"'$APPMESH_NAME'"},{"Name":"VirtualRouter","Value":"'$VIRTUAL_ROUTER_NAME'"}],"MetricName":"4xxError"},"ReturnData":true}]' \
+ # --metric-data-queries '[{"Id":"m1","MetricStat":{"Metric":{"Dimensions":[{"Name":"VirtualService","Value":"'$VIRTUAL_SERVICE_NAME'"},{"Name":"Mesh","Value":"'$APPMESH_NAME'"},{"Name":"VirtualRouter","Value":"'$VIRTUAL_ROUTER_NAME'"}],"MetricName":"4xxError"},"ReturnData":true}]' \
+   --metric-data-queries "$(cat <<EOF
+[
+  {
+    "Id": "m1",
+    "MetricStat": {
+      "Metric": {
+        "Dimensions": [
+          {"Name": "VirtualService", "Value": "'$VIRTUAL_SERVICE_NAME'"},
+          {"Name": "Mesh", "Value": "'$APPMESH_NAME'"},
+          {"Name": "VirtualRouter", "Value": "'$VIRTUAL_ROUTER_NAME'"}
+        ],
+        "MetricName": "4xxError"
+      },
+      "ReturnData": true
+    }
+  }
+]
+EOF
+)" \ 
+
   --scan-by "TimestampDescending" \
   --max-datapoints 1 \
   --output json \
