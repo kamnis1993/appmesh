@@ -6,7 +6,7 @@ AWS_REGION="ap-northeast-1"
 
 # Set your AppMesh parameters
 APPMESH_NAME="example"
-ROUTE_NAME= "example"
+ROUTE_NAME="example"
 #VIRTUAL_SERVICE_NAME="example"
 CANARY_TARGET_VERSION="v2"  # Version to gradually roll out
 VIRTUAL_ROUTER_NAME="example"  # Set the virtual router name
