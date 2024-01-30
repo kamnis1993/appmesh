@@ -75,8 +75,8 @@ else
   log "Setting canary traffic to 100%"
   aws appmesh update-route --region $AWS_REGION \
     --mesh-name $APPMESH_NAME \
-    --route-name $VIRTUAL_SERVICE_NAME-route \
-    --virtual-name $VIRTUAL_SERVICE_NAME \
+   # --route-name $VIRTUAL_SERVICE_NAME-route \
+    --virtual-service-name $VIRTUAL_SERVICE_NAME-route \
     --virtual-router-name $VIRTUAL_ROUTER_NAME \
     --spec '{"httpRoute": {"action": {"weightedTargets": [{"virtualNode": "canary", "weight": 100}]}, "match": { "prefix": "/" }}}'
 
