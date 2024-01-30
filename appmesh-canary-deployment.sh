@@ -22,7 +22,7 @@ log "Deploying initial traffic to canary version with 0% weight"
 aws appmesh update-route --region $AWS_REGION \
   --mesh-name $APPMESH_NAME \
   --route-name $VIRTUAL_SERVICE_NAME-route \
-  --virtual-router-name $VIRTUAL_SERVICE_NAME-router \
+  --virtual-name $VIRTUAL_SERVICE_NAME \
   --spec '{"httpRoute": {"action": {"weightedTargets": [{"virtualNode": "canary", "weight": 0}]}, "match": { "prefix": "/" }}}'
 
 # Sleep for a duration to observe metrics (adjust as needed)
@@ -47,7 +47,7 @@ if (( $(echo "$error_rate > $ERROR_THRESHOLD" | bc -l) )); then
   aws appmesh update-route --region $AWS_REGION \
     --mesh-name $APPMESH_NAME \
     --route-name $VIRTUAL_SERVICE_NAME-route \
-    --virtual-router-name $VIRTUAL_SERVICE_NAME \
+    --virtual-name $VIRTUAL_SERVICE_NAME \
     --spec '{"httpRoute": {"action": {"weightedTargets": [{"virtualNode": "canary", "weight": 0}]}, "match": { "prefix": "/" }}}'
 
   # Notify on rollback (add your notification logic)
@@ -60,7 +60,7 @@ else
     aws appmesh update-route --region $AWS_REGION \
       --mesh-name $APPMESH_NAME \
       --route-name $VIRTUAL_SERVICE_NAME-route \
-      --virtual-router-name $VIRTUAL_SERVICE_NAME-router \
+      --virtual-name $VIRTUAL_SERVICE_NAME \
       --spec '{"httpRoute": {"action": {"weightedTargets": [{"virtualNode": "canary", "weight": '$weight'}]}, "match": { "prefix": "/" }}}'
 
     # Sleep for a duration to observe metrics (adjust as needed)
@@ -73,7 +73,7 @@ else
   aws appmesh update-route --region $AWS_REGION \
     --mesh-name $APPMESH_NAME \
     --route-name $VIRTUAL_SERVICE_NAME-route \
-    --virtual-router-name $VIRTUAL_SERVICE_NAME-router \
+    --virtual-name $VIRTUAL_SERVICE_NAME \
     --spec '{"httpRoute": {"action": {"weightedTargets": [{"virtualNode": "canary", "weight": 100}]}, "match": { "prefix": "/" }}}'
 
   # Notify on successful canary deployment (add your notification logic)
