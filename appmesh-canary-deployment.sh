@@ -32,43 +32,20 @@ log "Sleeping for 5 minutes to observe metrics"
 sleep 60  # Sleep for 5 minutes
 
 
-# Create a temporary file for metric data queries
-METRIC_DATA_QUERIES_FILE=$(mktemp)
-cat <<EOF >$METRIC_DATA_QUERIES_FILE
-[
-  {
-    "Id": "m1",
-    "MetricStat": {
-      "Metric": {
-        "Dimensions": [
-          {"Name": "VirtualService", "Value": "$VIRTUAL_SERVICE_NAME"},
-          {"Name": "Mesh", "Value": "$APPMESH_NAME"},
-          {"Name": "VirtualRouter", "Value": "$VIRTUAL_ROUTER_NAME"}
-        ],
-        "MetricName": "4xxError",
-        "Namespace": "AWS/AppMesh"
-      },
-      "Period": 300,
-      "Stat": "Sum",
-      "Unit": "Count"
-    },
-    "ReturnData": true
-  }
-]
-EOF
-
-# Use the temporary file in the AWS CLI command
+##
+# Check metrics (example: error rate)
+log "Checking metrics (error rate)"
 error_rate=$(aws cloudwatch get-metric-data --region $AWS_REGION \
   --start-time $(date -u +%Y-%m-%dT%H:%M:%SZ --date '-5 minutes') \
   --end-time $(date -u +%Y-%m-%dT%H:%M:%SZ) \
-  --metric-data-queries file://$METRIC_DATA_QUERIES_FILE \
+  --metric-data-queries "[{\"id\":\"m1\",\"metricStat\":{\"metric\":{\"dimensions\":[{\"name\":\"VirtualService\",\"value\":\"$VIRTUAL_SERVICE_NAME\"},{\"name\":\"Mesh\",\"value\":\"$APPMESH_NAME\"},{\"name\":\"VirtualRouter\",\"value\":\"$VIRTUAL_ROUTER_NAME\"}],\"metricName\":\"4xxError\",\"namespace\":\"AWS/AppMesh\"},\"period\":300,\"stat\":\"Sum\",\"unit\":\"Count\"},\"returnData\":true}]" \
   --scan-by "TimestampDescending" \
-  --max-datapoints 1 \
+  --limit 1 \
   --output json \
   --query 'MetricDataResults[0].Values[0]')
 
-# Remove the temporary file
-rm -f $METRIC_DATA_QUERIES_FILE
+
+
 
 
 
