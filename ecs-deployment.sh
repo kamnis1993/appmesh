@@ -20,4 +20,4 @@ aws ecs update-service \
 aws ecs tag-resource \
   --region $REGION \
   --resource-arn $ECS_SERVICE_ARN \
-  --tags Key=CommitHash,Value=$COMMIT_HASH
+  --tags Key=Name,Value=$COMMIT_HASH
