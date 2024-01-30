@@ -34,6 +34,7 @@ sleep 60  # Sleep for 5 minutes
 
 ##
 
+
 # Check metrics (example: error rate)
 log "Checking metrics (error rate)"
 error_rate=$(aws cloudwatch get-metric-data --region $AWS_REGION \
@@ -55,7 +56,8 @@ error_rate=$(aws cloudwatch get-metric-data --region $AWS_REGION \
         "Period": 300,
         "Stat": "Sum",
         "Unit": "Count"
-      }
+      },
+      "ReturnData": true
     }
   ]' \
   --output json \
