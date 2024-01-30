@@ -47,7 +47,7 @@ if (( $(echo "$error_rate > $ERROR_THRESHOLD" | bc -l) )); then
   aws appmesh update-route --region $AWS_REGION \
     --mesh-name $APPMESH_NAME \
     --route-name $VIRTUAL_SERVICE_NAME-route \
-    --virtual-router-name $VIRTUAL_SERVICE_NAME-router \
+    --virtual-router-name $VIRTUAL_SERVICE_NAME \
     --spec '{"httpRoute": {"action": {"weightedTargets": [{"virtualNode": "canary", "weight": 0}]}, "match": { "prefix": "/" }}}'
 
   # Notify on rollback (add your notification logic)
