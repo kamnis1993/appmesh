@@ -43,8 +43,11 @@ jobs:
 
       - name: Build and Push Docker Image
         run: |
-          docker build -t ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/your-ecr-repo:latest .
-          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/your-ecr-repo:latest
+          docker build -t ecs .
+          docker tag ecs:latest 381492111475.dkr.ecr.ap-northeast-1.amazonaws.com/ecs:latest
+          docker push 381492111475.dkr.ecr.ap-northeast-1.amazonaws.com/ecs:latest
+          #docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/your-ecr-repo:latest
+          #docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/your-ecr-repo:latest
 
   deploy-to-ecs:
     needs: [build-and-deploy]
