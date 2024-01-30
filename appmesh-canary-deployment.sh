@@ -31,7 +31,6 @@ aws appmesh update-route --region $AWS_REGION \
 log "Sleeping for 5 minutes to observe metrics"
 sleep 60  # Sleep for 5 minutes
 
-
 # Create a temporary file for metric data queries
 METRIC_DATA_QUERIES_FILE=$(mktemp)
 cat <<EOF >$METRIC_DATA_QUERIES_FILE
@@ -69,6 +68,9 @@ error_rate=$(aws cloudwatch get-metric-data --region $AWS_REGION \
 
 # Remove the temporary file
 rm -f $METRIC_DATA_QUERIES_FILE
+
+
+
 
 
 
