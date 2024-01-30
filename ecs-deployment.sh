@@ -22,6 +22,6 @@ for TASK_DEF in "${TASK_DEFINITIONS[@]}"; do
   aws ecs tag-resource \
     --region $REGION \
     --resource-arn $ECS_SERVICE_ARN \
-    --tags Key=CommitHash,Value=$COMMIT_HASH
+    --tags key=CommitHash,value=$COMMIT_HASH
 done
 
