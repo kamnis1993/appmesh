@@ -1,12 +1,12 @@
 name: ECS and AppMesh Deployment
 
-on:
-  push:
-    branches:
+ on:
+   push:
+   branches:
       - main
 
-jobs:
-  deploy:
+  #jobs:
+  #deploy:
     #    runs-on: ubuntu-latest
 
     #  steps:
