@@ -12,9 +12,9 @@ ECS_SERVICE_ARN=arn:aws:ecs:ap-northeast-1:381492111475:cluster/example
 # Example ECS Update Service Command
 aws ecs update-service \
   --region $REGION \
-  --cluster your-cluster-name \
+  --cluster example \
   --service $ECS_SERVICE_ARN \
-  --task-definition your-task-definition:latest
+  --task-definition examplegw:1
 
 # Tag ECS tasks with the commit hash
 #aws ecs tag-resource \
