@@ -6,10 +6,10 @@ AWS_REGION="ap-northeast-1"
 
 # Set your AppMesh parameters
 APPMESH_NAME="example"
-ROUTE_NAME="example"
-#VIRTUAL_SERVICE_NAME="example"
-CANARY_TARGET_VERSION="v2"  # Version to gradually roll out
-VIRTUAL_ROUTER_NAME="example"  # Set the virtual router name
+ROUTE_NAME="example-route"
+VIRTUAL_ROUTER_NAME="example-router"
+VIRTUAL_NODE_CANARY="example1"  # Change to your first virtual node
+VIRTUAL_NODE_PRIMARY="example2"  # Change to your second virtual node
 
 # Set thresholds for canary deployment
 ERROR_THRESHOLD=10  # Set a threshold for acceptable error rate in percentage
@@ -24,9 +24,8 @@ log "Deploying initial traffic to the canary version with 0% weight"
 aws appmesh update-route --region $AWS_REGION \
   --mesh-name $APPMESH_NAME \
   --route-name $ROUTE_NAME \
-#  --virtual-service-name $VIRTUAL_SERVICE_NAME \
   --virtual-router-name $VIRTUAL_ROUTER_NAME \
-  --spec '{"httpRoute": {"action": {"weightedTargets": [{"virtualNode": "canary", "weight": 0}]}, "match": { "prefix": "/" }}}'
+  --spec '{"httpRoute": {"action": {"weightedTargets": [{"virtualNode": "'$VIRTUAL_NODE_CANARY'", "weight": 0}]}, "match": { "prefix": "/" }}}'
 
 # Sleep for a duration to observe metrics (adjust as needed)
 log "Sleeping for 5 minutes to observe metrics"
@@ -37,7 +36,7 @@ log "Checking metrics (error rate)"
 error_rate=$(aws cloudwatch get-metric-data --region $AWS_REGION \
   --start-time $(date -u +%Y-%m-%dT%H:%M:%SZ --date '-5 minutes') \
   --end-time $(date -u +%Y-%m-%dT%H:%M:%SZ) \
-  --metric-data-queries '[{"id":"m1","metricStat":{"metric":{"dimensions":[{"name":"VirtualService","value": "'$VIRTUAL_SERVICE_NAME'"},{"name":"Mesh","value":"'$(echo $APPMESH_NAME)'"},{"name":"VirtualRouter","value":"'$(echo $VIRTUAL_ROUTER_NAME)'"}],"metricName":"4xxError"}},"returnData":true}]' \
+  --metric-data-queries '[{"id":"m1","metricStat":{"metric":{"dimensions":[{"name":"Route","value": "'$ROUTE_NAME'"},{"name":"Mesh","value":"'$(echo $APPMESH_NAME)'"},{"name":"VirtualRouter","value":"'$(echo $VIRTUAL_ROUTER_NAME)'"}],"metricName":"4xxError"}},"returnData":true}]' \
   --scan-by "TimestampDescending" \
   --limit 1 \
   --output json \
@@ -50,9 +49,8 @@ if (( $(echo "$error_rate > $ERROR_THRESHOLD" | bc -l) )); then
   aws appmesh update-route --region $AWS_REGION \
     --mesh-name $APPMESH_NAME \
     --route-name $ROUTE_NAME \
- #   --virtual-service-name $VIRTUAL_SERVICE_NAME \
     --virtual-router-name $VIRTUAL_ROUTER_NAME \
-    --spec '{"httpRoute": {"action": {"weightedTargets": [{"virtualNode": "canary", "weight": 0}]}, "match": { "prefix": "/" }}}'
+    --spec '{"httpRoute": {"action": {"weightedTargets": [{"virtualNode": "'$VIRTUAL_NODE_CANARY'", "weight": 0}]}, "match": { "prefix": "/" }}}'
 
   # Notify on rollback (add your notification logic)
   log "Canary deployment rolled back due to a high error rate. Notifying..."
@@ -64,9 +62,8 @@ else
     aws appmesh update-route --region $AWS_REGION \
       --mesh-name $APPMESH_NAME \
       --route-name $ROUTE_NAME \
-#      --virtual-service-name $VIRTUAL_SERVICE_NAME \
       --virtual-router-name $VIRTUAL_ROUTER_NAME \
-      --spec '{"httpRoute": {"action": {"weightedTargets": [{"virtualNode": "canary", "weight": '$weight'}]}, "match": { "prefix": "/" }}}'
+      --spec '{"httpRoute": {"action": {"weightedTargets": [{"virtualNode": "'$VIRTUAL_NODE_CANARY'", "weight": '$weight'}]}, "match": { "prefix": "/" }}}'
 
     # Sleep for a duration to observe metrics (adjust as needed)
     log "Sleeping for 5 minutes to observe metrics"
@@ -78,9 +75,8 @@ else
   aws appmesh update-route --region $AWS_REGION \
     --mesh-name $APPMESH_NAME \
     --route-name $ROUTE_NAME \
-#    --virtual-service-name $VIRTUAL_SERVICE_NAME \
     --virtual-router-name $VIRTUAL_ROUTER_NAME \
-    --spec '{"httpRoute": {"action": {"weightedTargets": [{"virtualNode": "canary", "weight": 100}]}, "match": { "prefix": "/" }}}'
+    --spec '{"httpRoute": {"action": {"weightedTargets": [{"virtualNode": "'$VIRTUAL_NODE_CANARY'", "weight": 100}]}, "match": { "prefix": "/" }}}'
 
   # Notify on successful canary deployment (add your notification logic)
   log "Canary deployment completed successfully"
