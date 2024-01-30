@@ -25,7 +25,7 @@ aws appmesh update-route --region $AWS_REGION \
   --mesh-name $APPMESH_NAME \
   --route-name $ROUTE_NAME \
   --virtual-router-name $VIRTUAL_ROUTER_NAME \
-  --spec '{"httpRoute": {"action": {"weightedTargets": [{"virtualNode": "'$VIRTUAL_NODE_CANARY'", "weight": 0}]}, "match": { "prefix": "/" }}}'
+  --spec '{"httpRoute": {"action": {"weightedTargets": [{"virtualNode": "'$VIRTUAL_NODE_CANARY'", "weight": 1}]}, "match": { "prefix": "/" }}}'
 
 # Sleep for a duration to observe metrics (adjust as needed)
 log "Sleeping for 5 minutes to observe metrics"
@@ -50,7 +50,7 @@ if (( $(echo "$error_rate > $ERROR_THRESHOLD" | bc -l) )); then
     --mesh-name $APPMESH_NAME \
     --route-name $ROUTE_NAME \
     --virtual-router-name $VIRTUAL_ROUTER_NAME \
-    --spec '{"httpRoute": {"action": {"weightedTargets": [{"virtualNode": "'$VIRTUAL_NODE_CANARY'", "weight": 0}]}, "match": { "prefix": "/" }}}'
+    --spec '{"httpRoute": {"action": {"weightedTargets": [{"virtualNode": "'$VIRTUAL_NODE_CANARY'", "weight": 1}]}, "match": { "prefix": "/" }}}'
 
   # Notify on rollback (add your notification logic)
   log "Canary deployment rolled back due to a high error rate. Notifying..."
