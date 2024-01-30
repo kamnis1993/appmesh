@@ -88,6 +88,6 @@ jobs:
 
       - name: Execute App Mesh Canary Deployment Script
         run: |
-          chmod +x appmesh-canary-deployment.sh
+          chmod +x ./appmesh-canary-deployment.sh
           ./appmesh-canary-deployment.sh ${{ needs.build-and-deploy.outputs.appmesh_mesh_name }} ${{ needs.build-and-deploy.outputs.appmesh_virtual_router_name }}
 
