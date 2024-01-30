@@ -6,7 +6,7 @@ AWS_REGION="ap-northeast-1"
 
 # Set your AppMesh parameters
 APPMESH_NAME="example"
-ROUTE_NAME="example-route"
+ROUTE_NAME="example"
 VIRTUAL_ROUTER_NAME="example"
 VIRTUAL_NODE_CANARY="example1"  # Change to your first virtual node
 VIRTUAL_NODE_PRIMARY="example2"  # Change to your second virtual node
