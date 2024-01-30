@@ -87,5 +87,7 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Execute App Mesh Canary Deployment Script
-        run: ./appmesh-canary-deployment.sh ${{ needs.build-and-deploy.outputs.appmesh_mesh_name }} ${{ needs.build-and-deploy.outputs.appmesh_virtual_router_name }}
+        run: |
+          chmod +x appmesh-canary-deployment.sh
+          ./appmesh-canary-deployment.sh ${{ needs.build-and-deploy.outputs.appmesh_mesh_name }} ${{ needs.build-and-deploy.outputs.appmesh_virtual_router_name }}
 
