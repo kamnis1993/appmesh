@@ -34,34 +34,33 @@ sleep 60  # Sleep for 5 minutes
 
 ##
 
-
 # Check metrics (example: error rate)
 log "Checking metrics (error rate)"
 error_rate=$(aws cloudwatch get-metric-data --region $AWS_REGION \
   --start-time $(date -u +%Y-%m-%dT%H:%M:%SZ --date '-5 minutes') \
   --end-time $(date -u +%Y-%m-%dT%H:%M:%SZ) \
-  --metric-data-queries '[
-    {
-      "Id": "m1",
-      "MetricStat": {
-        "Metric": {
-          "Dimensions": [
-            {"Name": "VirtualService", "Value": "'$VIRTUAL_SERVICE_NAME'"},
-            {"Name": "Mesh", "Value": "'$APPMESH_NAME'"},
-            {"Name": "VirtualRouter", "Value": "'$VIRTUAL_ROUTER_NAME'"}
-          ],
-          "MetricName": "4xxError",
-          "Namespace": "AWS/AppMesh"
-        },
-        "Period": 300,
-        "Stat": "Sum",
-        "Unit": "Count"
+  --metric-data-queries '[{
+    "Id": "m1",
+    "MetricStat": {
+      "Metric": {
+        "Dimensions": [
+          {"Name": "VirtualService", "Value": "'$VIRTUAL_SERVICE_NAME'"},
+          {"Name": "Mesh", "Value": "'$APPMESH_NAME'"},
+          {"Name": "VirtualRouter", "Value": "'$VIRTUAL_ROUTER_NAME'"}
+        ],
+        "MetricName": "4xxError",
+        "Namespace": "AWS/AppMesh"
       },
-      "ReturnData": true
-    }
-  ]' \
+      "Period": 300,
+      "Stat": "Sum",
+      "Unit": "Count"
+    },
+    "ReturnData": true
+  }]' \
   --output json \
   --query 'MetricDataResults[0].Values[0]')
+
+
 
 
 
