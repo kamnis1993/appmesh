@@ -33,17 +33,29 @@ sleep 60  # Sleep for 5 minutes
 
 # Check metrics (example: error rate)
 log "Checking metrics (error rate)"
-error_rate=$(aws cloudwatch get-metric-statistics --region $AWS_REGION \
-  --namespace AWS/AppMesh \
-  --metric-name 4xxError \
+error_rate=$(aws cloudwatch get-metric-data --region $AWS_REGION \
   --start-time $(date -u +%Y-%m-%dT%H:%M:%SZ --date '-5 minutes') \
   --end-time $(date -u +%Y-%m-%dT%H:%M:%SZ) \
-  --period 300 \
-  --statistics Sum \
-  --dimensions Name=Route,Value=$ROUTE_NAME Name=Mesh,Value=$APPMESH_NAME Name=VirtualRouter,Value=$VIRTUAL_ROUTER_NAME | jq -r '.Datapoints[0].Sum')
-
-# Print metrics
-log "Metrics (error rate): $error_rate"
+  --metric-data-queries '[{
+    "Id": "m1",
+    "MetricStat": {
+      "Metric": {
+        "Dimensions": [
+          {"Name": "Route", "Value": "'$ROUTE_NAME'"},
+          {"Name": "Mesh", "Value": "'$APPMESH_NAME'"},
+          {"Name": "VirtualRouter", "Value": "'$VIRTUAL_ROUTER_NAME'"}
+        ],
+        "MetricName": "4xxError",
+        "Namespace": "AWS/AppMesh"
+      },
+      "Period": 300,
+      "Stat": "Sum",
+      "Unit": "Count"
+    },
+    "ReturnData": true
+  }]' \
+  --output json \
+  --query 'MetricDataResults[0].Values[0]')
 
 # Compare error rate with the threshold
 if (( $(echo "$error_rate > $ERROR_THRESHOLD" | bc -l) )); then
@@ -70,21 +82,7 @@ else
 
     # Sleep for a duration to observe metrics (adjust as needed)
     log "Sleeping for 5 minutes to observe metrics"
-    sleep 60  # Sleep for 5 minutes
-
-    # Check metrics (example: error rate)
-    log "Checking metrics (error rate)"
-    error_rate=$(aws cloudwatch get-metric-statistics --region $AWS_REGION \
-      --namespace AWS/AppMesh \
-      --metric-name 4xxError \
-      --start-time $(date -u +%Y-%m-%dT%H:%M:%SZ --date '-5 minutes') \
-      --end-time $(date -u +%Y-%m-%dT%H:%M:%SZ) \
-      --period 300 \
-      --statistics Sum \
-      --dimensions Name=Route,Value=$ROUTE_NAME Name=Mesh,Value=$APPMESH_NAME Name=VirtualRouter,Value=$VIRTUAL_ROUTER_NAME | jq -r '.Datapoints[0].Sum')
-
-    # Print metrics
-    log "Metrics (error rate): $error_rate"
+    sleep 300  # Sleep for 5 minutes
   done
 
   # Finalize by setting canary traffic to 100%
@@ -98,11 +96,4 @@ else
   # Notify on successful canary deployment (add your notification logic)
   log "Canary deployment completed successfully"
 fi
-
-# Fetch and print relevant logs
-log "Fetching and printing relevant logs..."
-aws logs get-log-events --region $AWS_REGION \
-  --log-group-name "/ecs/example" \
-  --log-stream-name "ecs-log-events" \
-  --limit 10  # Adjust the limit as needed
 
